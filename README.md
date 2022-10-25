@@ -1,0 +1,3 @@
+# antiOCR
+
+Make Characters Free.
