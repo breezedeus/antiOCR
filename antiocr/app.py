@@ -17,7 +17,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from PIL import Image
+from PIL import Image, ImageFilter
 import streamlit as st
 
 from cnocr import CnOcr
@@ -49,7 +49,7 @@ def main():
     min_font_size = int(cols[0].number_input('最小文字大小', 2, 80, value=15))
     max_font_size = int(
         cols[1].number_input(
-            '最大文字大小', min_font_size + 1, 120, value=max(60, min_font_size + 1)
+            '最大文字大小', min_font_size + 1, 120, value=max(40, min_font_size + 1)
         )
     )
     text_color = st.sidebar.color_picker('文字颜色', value='#5087DC')
@@ -84,16 +84,20 @@ def main():
     else:
         bg_gen_config = None
         bg_image = Image.open(RESOURCE_PATH / 'bg.jpeg')
+        bg_image = bg_image.filter(ImageFilter.MaxFilter(3))
 
-    st.markdown('# 让文字自由传播：[antiOCR](https://github.com/breezedeus/antiOCR)')
-    st.markdown('**antiOCR** 对指定的文字（来自输入或者图片）进行处理，输出图片，此图片无法通过OCR技术识别出有意义的文字。')
-    st.markdown(
-        '> 欢迎加入 [交流群](https://cnocr.readthedocs.io/zh/latest/contact/) ；'
-        '作者：[breezedeus](https://github.com/breezedeus) 。'
-    )
+    title = '让文字自由传播：<a href="https://github.com/breezedeus/antiOCR">antiOCR</a>'
+    st.markdown(f"<h1 style='text-align: center;'>{title}</h1>", unsafe_allow_html=True)
+    subtitle = '作者：<a href="https://github.com/breezedeus">breezedeus</a>； ' \
+               '欢迎加入 <a href="https://cnocr.readthedocs.io/zh/latest/contact/">交流群</a>'
+    st.markdown(f"<div style='text-align: center;'>{subtitle}</div>", unsafe_allow_html=True)
+    st.markdown('')
+    st.markdown('')
+    desc = '<strong>antiOCR</strong> 对指定的文字（来自输入或者图片）进行处理，输出图片，此图片无法通过OCR技术识别出有意义的文字。'
+    st.markdown(f"<div style='text-align: left;'>{desc}</div>", unsafe_allow_html=True)
     st.markdown('')
     st.subheader('选择待转换文字图片，或者直接输入待转换文字')
-    default_texts = '现在不说别的，但看雍正、乾隆两朝对于中国人着作的手段，就足够令人震惊。全毁、抽毁、删去之类也且不说，最阴险的是篡改了古书的内容。乾隆朝的篡修《四库全书》是许多人颂为一代盛事的，但他们不但搞乱了古书的格式，还篡改了古人的文章，不但藏之于内廷，还颁之于文风颇盛之处，使天下士子阅读，永不会觉得我们中国的作者里面也曾经有过很多很有些骨气的人。 ——鲁迅'
+    default_texts = '真的猛士，敢于直面惨淡的人生，敢于正视淋漓的鲜血。这是怎样的哀痛者和幸福者？然而造化又常常为庸人设计，以时间的流逝，来洗涤旧迹，仅是留下淡红的血色和微漠的悲哀。在这淡红的血色和微漠的悲哀中，又给人暂得偷生，维持着这似人非人的世界。 ——鲁迅'
     content_file = st.file_uploader('待转换文字图片', type=["png", "jpg", "jpeg", "webp"])
     ocr = get_ocr_model()
     anti = AntiOcr()
