@@ -1,11 +1,13 @@
 # coding: utf-8
 from pathlib import Path
-from typing import Union, Optional
+from typing import Union, Optional, Dict, Any
 import random
 
-from PIL import Image, ImageDraw, ImageFont, ImageColor, ImageFilter
+from PIL import Image, ImageDraw, ImageFont
 
 from .consts import RESOURCE_PATH
+from .utils import draw_rotated_char
+from .bg_generator import BackgroundGenerator
 
 
 # class Renderer0(object):
@@ -67,27 +69,11 @@ from .consts import RESOURCE_PATH
 #
 
 
-def draw_rotated_char(img, _c, fnt, box, fill):
-    # create image for blending
-    bg_color = 'white'
-    osd = Image.new("RGB", (box[2] - box[0], box[3] - box[1]), bg_color)
-    draw = ImageDraw.Draw(osd)  # create drawing context
-    draw.text(
-        (0, 0), _c, font=fnt, fill=fill, anchor='lt', spacing=0
-    )  # draw text to osd
-    angle = random.randint(170, 190)
-    osd = osd.rotate(angle, expand=True, fillcolor=bg_color)
-    del draw  # destroy drawing context
-
-    # blend osd image
-    img.paste(
-        osd, box[:2], mask=Image.new("L", osd.size, 222),
-    )
-    return img
-
-
 class Renderer(object):
     line_break = '\n'
+
+    def __init__(self):
+        self.bg_generator = BackgroundGenerator()
 
     def __call__(
         self,
@@ -98,6 +84,7 @@ class Renderer(object):
         text_color='black',
         font_fp='/System/Library/Fonts/PingFang.ttc',
         bg_image: Optional[Union[Image.Image, Path, str]] = None,
+        bg_gen_config: Optional[Dict[str, Any]] = None,
     ):
         # get a font
         font_sizes = [
@@ -107,7 +94,20 @@ class Renderer(object):
         # fnt = None
 
         if bg_image is None:
-            bg_image = Image.open(RESOURCE_PATH / 'bg2.jpeg')
+            default_bg_gen_config = dict(
+                image_size=(800, 700),
+                min_font_size=int(min_font_size * 0.5),
+                max_font_size=int(max_font_size * 0.8),
+                text_density=1,
+                text_color=text_color,
+                font_fps=[font_fp],
+            )
+            bg_gen_config = bg_gen_config or dict()
+            default_bg_gen_config.update(bg_gen_config)
+            try:
+                bg_image = self.bg_generator(**default_bg_gen_config)
+            except:
+                bg_image = Image.open(RESOURCE_PATH / 'bg.jpeg')
         elif isinstance(bg_image, (Path, str)):
             assert Path(bg_image).is_file()
             bg_image = Image.open(bg_image)

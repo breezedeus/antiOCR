@@ -58,6 +58,7 @@ class AntiOcr(object):
             text_color=text_color,
             font_fp=font_fp,
             bg_image=bg_image,
+            bg_gen_config=kwargs.get('bg_gen_config', dict()),
         )
         return img
 
