@@ -1,11 +1,11 @@
 # coding: utf-8
 
-from anti_ocr.renderer import *
-from anti_ocr.anti_ocr import AntiOcr
+from antiocr.renderer import *
+from antiocr.anti_ocr import AntiOcr
 
 
-def test_renderer2():
-    renderer = Renderer2()
+def test_renderer():
+    renderer = Renderer()
     texts = [
         'Hello, World!你好世界123456 Hello, World!你好世界123456 ',
         'Hello, World!你好世界123456 Hello, World!你好世界123456 ',
@@ -16,11 +16,11 @@ def test_renderer2():
 
 
 def test_anti_ocr():
-    anti = AntiOcr(char_reverse_ratio=0.3, char_to_pinyin_ratio=0.4)
+    anti = AntiOcr()
 
     texts = [
         'Hello, World!你好世界123456 Hello, World!你好世界123456 ',
         'Hello, World!你好世界123456 Hello, World!你好世界123456 ',
     ]
-    img = anti(texts)
+    img = anti(texts, char_reverse_ratio=0.3, char_to_pinyin_ratio=0.4)
     img.save("output2.png")

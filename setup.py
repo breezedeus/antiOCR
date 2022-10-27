@@ -37,13 +37,7 @@ exec(
 )
 
 required = [
-    'click',
-    'tqdm',
-    'pyyaml',
-    'unidecode',
-    'numpy',
     'pillow>=5.3.0',
-    'cnocr',
     'pypinyin',
 ]
 
@@ -59,7 +53,7 @@ cnstd = cnstd.cli:cli
 setup(
     name=PACKAGE_NAME,
     version=about['__version__'],
-    description="Python3 package for Chinese/English STR (Scene Text Recognition), with small pretrained models",
+    description="Python3 package for generating text images which can't be recognized by AI",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='breezedeus',
@@ -70,14 +64,6 @@ setup(
     packages=find_packages(),
     entry_points=entry_points,
     include_package_data=True,
-    data_files=[
-        (
-            '',
-            [
-                'cnstd/yolov7/yolov7-tiny.yaml',
-            ],
-        )
-    ],
     install_requires=required,
     extras_require=extras_require,
     zip_safe=False,
