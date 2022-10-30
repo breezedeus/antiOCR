@@ -21,6 +21,12 @@
 
 
 
+# Online Demo 
+
+参见 [antiOCR Online Demo](https://huggingface.co/spaces/breezedeus/antiOCR) 。Demo 功能齐全可直接使用。
+
+
+
 ## 使用说明
 
 

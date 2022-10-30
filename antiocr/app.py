@@ -136,6 +136,7 @@ def main():
     if st.button("生成图片"):
         if texts:
             with st.spinner('图片生成中…'):
+                logger.info('\ngenerating an image for texts:\n %s', texts)
                 out_img = anti(
                     texts,
                     char_reverse_ratio=char_reverse_ratio,
