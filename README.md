@@ -1,8 +1,10 @@
 # antiOCR
 
-**Anti OCR, Free Texts.**
+<div align="center">
+<strong>技术应服务于人民，而非奴役人民！</strong>
+</div>
 
-拒绝图片文字被OCR，让文字自由传播！  **antiOCR** 把指定文本转换成机器无法识别但人可读的文字图片。
+**Anti OCR, Free Texts.** 拒绝图片文字被OCR，让文字自由传播！ antiOCR 把指定文本转换成机器无法识别但人可读的文字图片。
 
 
 
