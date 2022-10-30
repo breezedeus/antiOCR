@@ -9,11 +9,11 @@
 欢迎扫码加小助手为好友，备注 `anti`，小助手会定期统一邀请大家入群：
 
 <div align="center">
-  <img src="./docs/figs/wx-qr-code.JPG" alt="微信群二维码" width="300px"/>
+  <img src="https://huggingface.co/datasets/breezedeus/cnocr-wx-qr-code/resolve/main/wx-qr-code.JPG" alt="微信群二维码" width="300px"/>
 </div>
 
 
-作者也维护 **知识星球** [**P2T/CnOCR/CnSTD私享群**](https://t.zsxq.com/FEYZRJQ) ，这里面的提问会较快得到作者的回复，欢迎加入。**知识星球私享群**也会陆续发布一些P2T/CnOCR/CnSTD相关的私有资料，包括[**更详细的训练教程**](https://articles.zsxq.com/id_u6b4u0wrf46e.html)，**未公开的模型**，**不同应用场景的调用代码**，使用过程中遇到的难题解答等。本群也会发布OCR/STD相关的最新研究资料。
+作者也维护 [**知识星球私享群**](https://t.zsxq.com/FEYZRJQ) ，这里面的提问会较快得到作者的回复，欢迎加入。**知识星球私享群**也会陆续发布一些开源项目相关的私有资料，包括一些**使用教程**，**未公开的模型**，**不同应用场景的调用代码**，使用过程中遇到的难题解答等。本群也会发布一些相关的最新研究资料。
 
 
 
@@ -36,6 +36,84 @@ img = anti(
 img.save("output.png")
 
 ```
+
+
+
+使用示例可以参考 [Streamlit Demo](antiocr/app.py) 。
+
+
+
+目前 antiOCR 使用的反OCR方法主要包括：
+
+* 每个文字随机使用不同大小的字体；
+* 每个汉字按指定概率进行倒转（随机生成倒转角度）；
+* 每个汉字按指定概率转换为中文拼音；
+* 【可选】随机生成干扰的背景图片；
+* 字体可按需指定；
+
+
+
+## 示例
+
+<table>
+<tr>
+<td> 生成的图片 </td> <td> 背景图片来源 </td>
+</tr>
+<tr>
+<td>
+<img src="./examples/fixed_bg1.jpeg" alt="固定背景图片"> 
+</td>
+<td>
+固定图片
+</td>
+</tr>
+<tr>
+<td>
+<img src="./examples/fixed_bg2.jpeg" alt="固定背景图片"> 
+</td>
+<td>
+固定图片
+</td>
+</tr>
+<tr>
+<td>
+<img src="./examples/fixed_bg3.jpeg" alt="固定背景图片"> 
+</td>
+<td>
+固定图片
+</td>
+</tr>
+  <tr>
+<td>
+<img src="./examples/random_bg1.jpeg" alt="随机背景图片"> 
+</td>
+<td>
+随机图片
+</td>
+</tr>
+<tr>
+<td>
+<img src="./examples/random_bg2.jpeg" alt="随机背景图片"> 
+</td>
+<td>
+随机图片
+</td>
+</tr>
+<tr>
+<td>
+<img src="./examples/random_bg3.jpeg" alt="随机背景图片"> 
+</td>
+<td>
+随机图片
+</td>
+</tr>
+</table>
+
+
+
+
+
+
 
 
 
