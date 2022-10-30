@@ -37,6 +37,8 @@ exec(
 )
 
 required = [
+    'click',
+    'tqdm',
     'pillow>=5.3.0',
     'pypinyin',
 ]
@@ -47,7 +49,6 @@ extras_require = {
 
 entry_points = """
 [console_scripts]
-cnstd = cnstd.cli:cli
 """
 
 setup(
@@ -64,6 +65,14 @@ setup(
     packages=find_packages(),
     entry_points=entry_points,
     include_package_data=True,
+    data_files=[
+        (
+            '',
+            [
+                'antiocr/resources/bg.jpeg',
+            ],
+        )
+    ],
     install_requires=required,
     extras_require=extras_require,
     zip_safe=False,

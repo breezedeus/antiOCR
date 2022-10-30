@@ -1,4 +1,22 @@
 # coding: utf-8
+# Copyright (C) 2022, [Breezedeus](https://github.com/breezedeus).
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
 from pathlib import Path
 from typing import List, Union, Tuple, Optional
 import random
@@ -20,29 +38,30 @@ class AntiOcr(object):
         self,
         texts: Union[str, List[str]],
         *,
+        font_fp: Union[str, Path],
         char_to_pinyin_ratio: float = 0.1,
         char_reverse_ratio: float = 0.1,
         min_font_size: int = 15,
         max_font_size: int = 60,
         text_color: Union[str, int, Tuple[int, int, int]] = 'black',
         bg_image: Optional[Union[str, Path, Image.Image]] = None,
-        font_fp: Union[str, Path] = '/System/Library/Fonts/PingFang.ttc',
         **kwargs
-    ):
+    ) -> Image.Image:
         """
 
         Args:
             texts (Union[str, List[str]]): 待转换文字文字
+            font_fp (Union[str, Path]): 字体文件所在路径；比如Mac下可以是 `/System/Library/Fonts/PingFang.ttc`
             char_to_pinyin_ratio (float): 中文字符转换成拼音的比例；默认值为 `0.1`
             char_reverse_ratio (float): 中文字符倒转的比例（拼音、英文和数字不做倒转）；默认值为 `0.1`
             min_font_size (int): 转换后的文字字体最小值；默认值为 `15`
             max_font_size (int): 转换后的文字字体最大值；默认值为 `60`
             text_color (Union[str, int, Tuple[int, int, int]]): 转换后的文字颜色；默认值为 `black`
             bg_image (Optional[Union[str, Path, Image.Image]]): 背景图片；默认值为 `None`，表示使用默认背景图片
-            font_fp (Union[str, Path]): 字体文件所在路径；默认值为 `/System/Library/Fonts/PingFang.ttc` (MAC)
-            **kwargs ():
+            **kwargs (): 可包括以下 key，
+              * `bg_gen_config`: dict, 传给 `BackgroundGenerator` 的调用参数
 
-        Returns:
+        Returns: Image.Image, 生成的图片
 
         """
         if isinstance(texts, list):

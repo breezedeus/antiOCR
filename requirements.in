@@ -1,11 +1,7 @@
 --index-url https://pypi.doubanio.com/simple --extra-index-url https://pypi.org/simple
 
+click
+tqdm
 pillow>=5.3.0
 pypinyin
-click
-numpy
-cnocr>=2.2
-
-####
-#apt install libraqm-dev
-#brew install libraqm
+#cnocr>=2.2

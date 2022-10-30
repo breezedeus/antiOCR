@@ -1,72 +1,31 @@
 # coding: utf-8
+# Copyright (C) 2022, [Breezedeus](https://github.com/breezedeus).
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+import os.path
 from pathlib import Path
 from typing import Union, Optional, Dict, Any
 import random
 
 from PIL import Image, ImageDraw, ImageFont
 
-from .consts import RESOURCE_PATH
+from .consts import BG_IMAGE_FP
 from .utils import draw_rotated_char
 from .bg_generator import BackgroundGenerator
-
-
-# class Renderer0(object):
-#     def __call__(self, texts, img: Image.Image):
-#         # img = Image.open("data/srcimg07.jpg")  # load base image
-#         dctx = ImageDraw.Draw(img)  # create drawing context
-#         bmsz = (img.width // 16 - 10, img.height // 16 - 10)
-#         #
-#         # NOTE: ImageColor.colormap is undocumented attribute.
-#         colors = list(ImageColor.colormap.keys())
-#         for y in range(16):
-#             for x in range(16):
-#                 bm = Image.new("L", bmsz)
-#                 dctx_inner = ImageDraw.Draw(bm)
-#                 dctx_inner.ellipse(
-#                     [(0, 0), bm.size],
-#                     fill=y * 16 + x,  # (y * 16 + x) varies in range(0, 256)
-#                 )
-#                 del dctx_inner
-#
-#                 pos = [((bmsz[0] + 10) * x + 10, (bmsz[1] + 10) * y + 10)]
-#                 dctx.bitmap(
-#                     pos,
-#                     # pixel values of bm is used as mask to fill.
-#                     bm,
-#                     fill=colors[(y * 16 + x) % len(colors)],
-#                 )
-#
-#         # del dctx  # destroy drawing context
-#         # img.save("result/ImageDraw_bitmap_01.png")
-#         return img
-#
-#
-# def get_font_size(
-#     image, texts, font_fp, min_font_size, max_font_size, which_best='large'
-# ):
-#     draw = ImageDraw.Draw(image)
-#     txt = "Hello World"
-#     fontsize = min_font_size  # starting font size
-#
-#     # portion of image width you want text width to be
-#     img_fraction = 0.95
-#
-#     # font = ImageFont.truetype(font_fp, fontsize)
-#     txtsz = draw.multiline_textsize(texts, fontsize)
-#     # for
-#     while font.getsize(txt)[0] < img_fraction * image.size[0]:
-#         # iterate until the text size is just larger than the criteria
-#         fontsize += 1
-#         font = ImageFont.truetype(font_fp, fontsize)
-#
-#     # optionally de-increment to be sure it is less than criteria
-#     fontsize -= 1
-#     font = ImageFont.truetype(font_fp, fontsize)
-#
-#     print('final font size', fontsize)
-#     draw.text((10, 25), txt, font=font)  # put the text on the image
-#     image.save('hsvwheel_txt.png')  # save it
-#
 
 
 class Renderer(object):
@@ -79,14 +38,15 @@ class Renderer(object):
         self,
         texts,
         *,
+        font_fp,
         min_font_size=15,
         max_font_size=60,
         text_color='black',
-        font_fp='/System/Library/Fonts/PingFang.ttc',
         bg_image: Optional[Union[Image.Image, Path, str]] = None,
         bg_gen_config: Optional[Dict[str, Any]] = None,
     ):
         # get a font
+        assert os.path.isfile(font_fp)
         font_sizes = [
             ImageFont.truetype(font_fp, _s)
             for _s in range(min_font_size, max_font_size + 1)
@@ -107,7 +67,7 @@ class Renderer(object):
             try:
                 bg_image = self.bg_generator(**default_bg_gen_config)
             except:
-                bg_image = Image.open(RESOURCE_PATH / 'bg.jpeg')
+                bg_image = Image.open(BG_IMAGE_FP)
         elif isinstance(bg_image, (Path, str)):
             assert Path(bg_image).is_file()
             bg_image = Image.open(bg_image)
@@ -157,7 +117,7 @@ class Renderer(object):
                 draw = ImageDraw.Draw(bg_image)
 
             if _c != self.line_break:
-                if c_info['reverse']:
+                if c_info.get('reverse', False):
                     draw_rotated_char(bg_image, _c, fnt, box, fill=text_color)
                 else:
                     draw.text(
@@ -167,36 +127,5 @@ class Renderer(object):
 
         height = min(xy[1] + largest_line_height * 1.5, bg_image.size[1])
         bg_image = bg_image.crop((0, 0, min(bg_image.size[0], max_width + 5), height))
-
-        # txtsz = draw.multiline_textsize(texts, fnt)
-        # # breakpoint()
-        # # del dctx
-        #
-        # # create image for blending
-        # osd = Image.new("RGB", (txtsz[0] + 10, txtsz[1] + 10), 245)
-        # draw = ImageDraw.Draw(osd)  # create drawing context
-        # draw.multiline_text((5, 5), texts, font=fnt, fill="red")  # draw text to osd
-        # del draw  # destroy drawing context
-        #
-        # # blend osd image
-        # img.paste(
-        #     osd,
-        #     box=(20, 420, osd.size[0] + 20, osd.size[1] + 420),
-        #     mask=Image.new("L", osd.size, 192),
-        # )
-
-        # # draw text to mask
-        # mask = Image.new("L", (txtsz[0], txtsz[1]), 12)
-        # dctx = ImageDraw.Draw(mask)  # create drawing context (of mask)
-        # dctx.multiline_text((0, 0), texts, font=fnt, fill=255)  # full opacity
-        #
-        # del dctx  # destroy drawing context
-        #
-        # # add some effect
-        # for i in range(10):
-        #     mask = mask.filter(ImageFilter.BLUR)
-        #
-        # # putmask to base image
-        # img.putalpha(mask.resize(img.size))
 
         return bg_image
