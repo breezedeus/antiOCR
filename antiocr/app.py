@@ -122,40 +122,45 @@ def main():
     content_file = st.file_uploader('输入待转换的文字图片：', type=["png", "jpg", "jpeg", "webp"])
     ocr = get_ocr_model()
     anti = AntiOcr()
-    texts = None
+    ocr_texts = None
     if content_file is not None:
         try:
             img = Image.open(content_file).convert('RGB')
             ocr_out = ocr.ocr(img)
-            texts = '\n'.join([out['text'] for out in ocr_out])
+            ocr_texts = '\n'.join([out['text'] for out in ocr_out])
         except Exception as e:
             st.error(e)
+        if not ocr_texts:
+            st.warning(f'抱歉，图片中未识别出任何文字。')
 
-    texts = st.text_area('或者，直接输入待转换的文字：', value=texts or default_texts, height=120)
+    texts = st.text_area(
+        '或者，直接输入待转换的文字：', value=ocr_texts or '', height=120, placeholder=default_texts
+    )
+    texts = texts or default_texts
 
-    if st.button("生成图片"):
-        if texts:
-            with st.spinner('图片生成中…'):
-                logger.info('\ngenerating an image for texts:\n %s', texts)
-                out_img = anti(
-                    texts,
-                    char_reverse_ratio=char_reverse_ratio,
-                    char_to_pinyin_ratio=char_to_pinyin_ratio,
-                    text_color=text_color,
-                    min_font_size=min_font_size,
-                    max_font_size=max_font_size,
-                    bg_image=bg_image,
-                    bg_gen_config=bg_gen_config,
-                    font_fp=font_fp,
-                )
-            st.subheader('输出图片')
-            st.image(out_img)
-            download_image_button(out_img)
+    enter = st.button("生成图片")
+    if (content_file is not None and ocr_texts) or enter:
+        with st.spinner('图片生成中…'):
+            logger.info('\ngenerating an image for texts:\n %s', texts)
+            out_img = anti(
+                texts,
+                char_reverse_ratio=char_reverse_ratio,
+                char_to_pinyin_ratio=char_to_pinyin_ratio,
+                text_color=text_color,
+                min_font_size=min_font_size,
+                max_font_size=max_font_size,
+                bg_image=bg_image,
+                bg_gen_config=bg_gen_config,
+                font_fp=font_fp,
+            )
+        st.subheader('输出图片')
+        st.image(out_img)
+        download_image_button(out_img)
 
-            st.markdown('**对输出图片进行OCR，结果如下（如果依旧出现敏感词，尝试重新生成图片）：**')
-            ocr_out = ocr.ocr(out_img)
-            new_texts = [out['text'] for out in ocr_out]
-            st.text('\n'.join(new_texts))
+        st.markdown('**对输出图片进行OCR，结果如下（如果依旧出现敏感词，尝试重新生成图片）：**')
+        ocr_out = ocr.ocr(out_img)
+        new_texts = [out['text'] for out in ocr_out]
+        st.text('\n'.join(new_texts))
 
 
 if __name__ == '__main__':
